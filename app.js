@@ -15,37 +15,63 @@ const KEY = '15674931-a9d714b6e9d654524df198e00&q';
 
 // show images 
 const showImages = (images) => {
-  imagesArea.style.display = 'block';
-  gallery.innerHTML = '';
-  // show gallery title
-  galleryHeader.style.display = 'flex';
-  images.forEach(image => {
-    let div = document.createElement('div');
-    div.className = 'col-lg-3 col-md-4 col-xs-6 img-item mb-2';
-    div.innerHTML = ` <img class="img-fluid img-thumbnail" onclick=selectItem(event,"${image.webformatURL}") src="${image.webformatURL}" alt="${image.tags}">`;
-    gallery.appendChild(div)
-  })
-
+  if(images.length != 0){
+    imagesArea.style.display = 'block';
+    gallery.innerHTML = '';
+    // show gallery title
+    galleryHeader.style.display = 'flex';
+    images.forEach(image => {
+      let div = document.createElement('div');
+      div.className = 'col-lg-3 col-md-4 col-xs-6 img-item mb-2';
+      div.innerHTML = ` <img class="img-fluid img-thumbnail"  onclick=selectItem(event,"${image.webformatURL}") src="${image.webformatURL}" alt="${image.tags}">`;
+      gallery.appendChild(div)
+    })
+  }else {
+    alert("search input isn't valid!");
+  }
+ 
+  addSpinner();
+ 
 }
 
 const getImages = (query) => {
+  console.log("spineer work");
+  addSpinner();
+  
   fetch(`https://pixabay.com/api/?key=${KEY}=${query}&image_type=photo&pretty=true`)
     .then(response => response.json())
-    .then(data => showImages(data.hitS))
+    .then((data) =>{ console.log(data); showImages(data.hits) })
     .catch(err => console.log(err))
+
 }
 
 let slideIndex = 0;
+console.log(sliders);
 const selectItem = (event, img) => {
   let element = event.target;
-  element.classList.add('added');
- 
-  let item = sliders.indexOf(img);
-  if (item === -1) {
+  
+  
+  let itemIndex = sliders.indexOf(img);
+  if (itemIndex === -1) {
     sliders.push(img);
+    element.classList.add('added');
   } else {
-    alert('Hey, Already added !')
+    sliders.splice(itemIndex, 1);
+    element.classList.remove('added');
+    console.log(sliders);
+    // sliders.filter((value,index)=>{
+    //   return sliders.indexOf(index) === value;
+    // });
+    // [...new Set(sliders)];
+    // sliders.push(img);
+    // let uniqueArr = [...new Set(sliders)];
+    // sliders = uniqueArr;
+    // alert("it has already addaed");
+    // console.log(sliders);
+    
+
   }
+  console.log(sliders);
 }
 var timer
 const createSlider = () => {
@@ -69,18 +95,26 @@ const createSlider = () => {
   imagesArea.style.display = 'none';
   const duration = document.getElementById('duration').value || 1000;
   sliders.forEach(slide => {
-    let item = document.createElement('div')
+    let item = document.createElement('div');
     item.className = "slider-item";
     item.innerHTML = `<img class="w-100"
     src="${slide}"
     alt="">`;
     sliderContainer.appendChild(item)
   })
-  changeSlide(0)
-  timer = setInterval(function () {
-    slideIndex++;
-    changeSlide(slideIndex);
-  }, duration);
+  if(duration>0){
+    changeSlide(0)
+    timer = setInterval(function () {
+      slideIndex++;
+      changeSlide(slideIndex);
+    }, duration);
+  }else{
+    alert("duration isn't valid");
+  }
+
+
+
+
 }
 
 // change slider index 
@@ -109,13 +143,37 @@ const changeSlide = (index) => {
   items[index].style.display = "block"
 }
 
+document.getElementById("search").addEventListener("keypress",function(e){
+  if(e.key === "Enter"){
+    e.preventDefault();
+    document.getElementById("search-btn").click();
+  }
+});
+
 searchBtn.addEventListener('click', function () {
+  
+  addSpinner();
   document.querySelector('.main').style.display = 'none';
   clearInterval(timer);
   const search = document.getElementById('search');
   getImages(search.value)
-  sliders.length = 0;
+  // sliders.length = 3;
+  
+  
+  document.getElementById("duration").addEventListener("keypress",function(e){
+    console.log("works");
+    if(e.key === "Enter"){
+      e.preventDefault();
+      document.getElementById("create-slider").click();
+    }
+  });
+  addSpinner();
 })
+
+const addSpinner = ()=>{
+  
+  document.getElementById("add-spineer").classList.toggle("d-none");
+}
 
 sliderBtn.addEventListener('click', function () {
   createSlider()

@@ -1,0 +1,9 @@
+
+issue fixing:
+1. adding spinner,
+2. data not found,
+3. define slider duration(remarking mili second)
+4. Enter keypress in search option and slider duration fild
+5. showing images
+6. deselectig slider images
+7. showing slider images

@@ -11,7 +11,7 @@
 }
 
 .slider-item {
-  display: none;
+  /*display: none;*/
 }
 
 .img-thumbnail {
@@ -64,3 +64,6 @@ img {
     width: 90%;
   }
 }
+.dis-none{display: none;}
+
+
